@@ -5,7 +5,7 @@ import java.util.List;
 public class Move {
     public static HashMap<Integer, List<Integer>> moves;
     public static PrecomputedData data = new PrecomputedData();
-git 
+    
     public static void loadMoves() {
         moves = new HashMap<>();
 
@@ -34,7 +34,7 @@ git
         for (int directionIdx = startingDirection; directionIdx < endingDirection; directionIdx++) {
 
             // checks square until piece reaches the end of the board
-            for (int n = 1; n <= data.numSquaresToEdge[startSquare][directionIdx]; n++) {
+            for (int n = 1; n <= PrecomputedData.numSquaresToEdge[startSquare][directionIdx]; n++) {
 
                 int targetSquare = startSquare + data.cardinalOffset[directionIdx] * n;
                 int pieceOnTargetSquare = BoardStatus.peek(targetSquare);
@@ -95,7 +95,7 @@ git
         if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
     }
 
-    // have to impliment au passant and captures
+    // have to impliment au passant and simplify captures
     public static void generatePawnMoves(int piece, int startSquare) {    
         List<Integer> possibleMoves = new ArrayList<>();
         
@@ -110,10 +110,53 @@ git
             possibleMoves.add(targetSquare);
 
             targetSquare += data.cardinalOffset[lateralDirection];
+            pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
             // check if pawn can move up twice
             if (pieceOnTargetSquare == Piece.Empty) {
                 possibleMoves.add(targetSquare);
+            }
+        }
+
+        // 4 6
+        if (lateralDirection == 0) {
+            if (startSquare % 8 != 0) {
+                targetSquare = startSquare + data.cardinalOffset[4];
+                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+
+                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                    possibleMoves.add(targetSquare);
+                }
+            }
+
+            if (startSquare % 8 != 7) {
+                targetSquare = startSquare + data.cardinalOffset[6];
+                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+
+                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                    possibleMoves.add(targetSquare);
+                }
+            }
+        }
+
+        // 5, 7
+        if (lateralDirection == 1) {
+            if (startSquare % 8 != 7) {
+                targetSquare = startSquare + data.cardinalOffset[5];
+                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+
+                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                    possibleMoves.add(targetSquare);
+                }
+            }
+
+            if (startSquare % 8 != 0) {
+                targetSquare = startSquare + data.cardinalOffset[7];
+                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+
+                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                    possibleMoves.add(targetSquare);
+                }
             }
         }
 
