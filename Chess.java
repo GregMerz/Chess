@@ -67,4 +67,27 @@ public class Chess {
 
         return -1;
     }
+    
+    // this will later improve the movement of pieces
+    public static void parseMoveInput(String moveInput) {
+        char symbol = moveInput.charAt(0);
+        int piece;
+
+        // find out what type of piece we are moving
+        if (Character.isLowerCase(symbol)) {
+            int file = symbol - 'A';
+            int rank = moveInput.charAt(0) - 1;
+            int square = file + rank * 8;
+
+            piece = Piece.Pawn | BoardStatus.colorTurn;
+        }
+
+        else {
+            
+        }
+
+        for (int inputIdx = 1; inputIdx < moveInput.length(); inputIdx++) {
+            
+        }
+    }
 } 
