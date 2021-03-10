@@ -113,7 +113,11 @@ public class Move {
             pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
             // check if pawn can move up twice
+<<<<<<< HEAD
             if (!hasPawnMoved(piece, startSquare) && pieceOnTargetSquare == Piece.Empty) {
+=======
+            if (pieceOnTargetSquare == Piece.Empty) {
+>>>>>>> 54e9279c039cf3a73960c380a349c7e2226c8008
                 possibleMoves.add(targetSquare);
             }
         }
@@ -162,6 +166,7 @@ public class Move {
 
         if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
     }
+<<<<<<< HEAD
 
     public static boolean hasPawnMoved(int piece, int square) {
         // (square / 8) ranges from 0 to 7 so adding one to go from 1 and 8 
@@ -177,4 +182,6 @@ public class Move {
         
         return true;
     }
+=======
+>>>>>>> 54e9279c039cf3a73960c380a349c7e2226c8008
 }
