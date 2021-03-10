@@ -113,7 +113,7 @@ public class Move {
             pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
             // check if pawn can move up twice
-            if (pieceOnTargetSquare == Piece.Empty) {
+            if (!hasPawnMoved(piece, startSquare) && pieceOnTargetSquare == Piece.Empty) {
                 possibleMoves.add(targetSquare);
             }
         }
@@ -161,5 +161,20 @@ public class Move {
         }
 
         if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
+    }
+
+    public static boolean hasPawnMoved(int piece, int square) {
+        // (square / 8) ranges from 0 to 7 so adding one to go from 1 and 8 
+        int rank = (square / 8) + 1;
+
+        if (Piece.isColor(piece, Piece.White) && rank == 2) {
+            return false;
+        }
+
+        if (Piece.isColor(piece, Piece.Black) && rank == 7) {
+            return false;
+        }
+        
+        return true;
     }
 }
