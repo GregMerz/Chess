@@ -12,20 +12,20 @@ public class FenUtility {
         pieceTypeFromSymbol.put('k', Piece.King);
 
         String[] fenParts = fen.split(" ");
-        
+
         String fenBoard = fenParts[0];
 
-//      BoardStatus.board = new int[64];
+        // BoardStatus.board = new int[64];
 
-        int file = 0, rank = 7;
+        int file = 0, rank = 0;
 
-        for (char symbol: fenBoard.toCharArray()) {
+        for (char symbol : fenBoard.toCharArray()) {
             if (Character.isDigit(symbol)) {
                 file += Character.getNumericValue(symbol);
             }
 
             else if (symbol == '/') {
-                rank--;
+                rank++;
                 file = 0;
             }
 
@@ -37,13 +37,12 @@ public class FenUtility {
             }
         }
 
-        BoardStatus.colorTurn = (fenParts[1].equals("w")) ? Piece.White: Piece.Black;
-        
+        BoardStatus.colorTurn = (fenParts[1].equals("w")) ? Piece.White : Piece.Black;
+
         String square = fenParts[3];
         if (square.equals("-")) {
             BoardStatus.enPassantSquare = -1;
-        }
-        else {
+        } else {
             char squareFile = square.charAt(0);
             int squareRank = square.charAt(1);
             int squareIdx = (squareFile - 'A') + ((squareRank - 1) * 8);

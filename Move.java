@@ -5,20 +5,26 @@ import java.util.List;
 public class Move {
     public static HashMap<Integer, List<Integer>> moves;
     public static PrecomputedData data = new PrecomputedData();
-    
+
     public static void loadMoves() {
         moves = new HashMap<>();
 
         for (int square = 0; square < 64; square++) {
             int piece = BoardStatus.peek(square);
-            if ( !Piece.isColor(piece, BoardStatus.colorTurn) ) continue;
+            if (!Piece.isColor(piece, BoardStatus.colorTurn))
+                continue;
             int pieceType = Piece.getType(piece);
 
-            if (piece == 0) continue;
-            else if (Piece.isSlidingPiece(piece)) generateSlidingMoves(piece, square);
-            else if (pieceType == Piece.Pawn) generatePawnMoves(piece, square);
-            else if (pieceType == Piece.Knight) generateKnightMoves(piece, square);
-            else generateKingMoves(piece, square);
+            if (piece == 0)
+                continue;
+            else if (Piece.isSlidingPiece(piece))
+                generateSlidingMoves(piece, square);
+            else if (pieceType == Piece.Pawn)
+                generatePawnMoves(piece, square);
+            else if (pieceType == Piece.Knight)
+                generateKnightMoves(piece, square);
+            else
+                generateKingMoves(piece, square);
         }
 
     }
@@ -27,7 +33,8 @@ public class Move {
         List<Integer> possibleMoves = new ArrayList<>();
 
         int pieceType = Piece.getType(piece);
-        // 0 - 4 is rook and queen cardinal moves while 4 - 8 are bishop and queen diagonal moves
+        // 0 - 4 is rook and queen cardinal moves while 4 - 8 are bishop and queen
+        // diagonal moves
         int startingDirection = (pieceType == Piece.Bishop) ? 4 : 0;
         int endingDirection = (pieceType == Piece.Rook) ? 4 : 8;
 
@@ -40,16 +47,20 @@ public class Move {
                 int pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
                 // if piece on target square is same color, then you can't move to that square
-                if (Piece.sameColor(piece, pieceOnTargetSquare)) break;
+                if (Piece.sameColor(piece, pieceOnTargetSquare))
+                    break;
 
                 possibleMoves.add(targetSquare);
 
-                // if piece on target square is opposite color, then you can't slide past that piece
-                if (pieceOnTargetSquare != Piece.Empty) break;
+                // if piece on target square is opposite color, then you can't slide past that
+                // piece
+                if (pieceOnTargetSquare != Piece.Empty)
+                    break;
             }
         }
 
-        if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
+        if (possibleMoves.size() != 0)
+            moves.put(startSquare, possibleMoves);
     }
 
     public static void generateKnightMoves(int piece, int startSquare) {
@@ -58,19 +69,21 @@ public class Move {
         // iterate through all possible knight moves
         for (int moveIdx = 0; moveIdx < 8; moveIdx++) {
             int targetSquare = startSquare + data.knightMovement[moveIdx];
-            
+
             // checks if targetSquare a number from 0-63
-            if ( !(targetSquare < 0 || targetSquare > 63) ) {
+            if (!(targetSquare < 0 || targetSquare > 63)) {
                 int pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
                 // check other moves if there is piece on target square is same color
-                if (Piece.sameColor(piece, pieceOnTargetSquare)) continue;
+                if (Piece.sameColor(piece, pieceOnTargetSquare))
+                    continue;
 
                 possibleMoves.add(targetSquare);
             }
         }
 
-        if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
+        if (possibleMoves.size() != 0)
+            moves.put(startSquare, possibleMoves);
     }
 
     // ADD TO SEE IF KING WOULD BE PUT IN CHECK
@@ -82,7 +95,7 @@ public class Move {
             int targetSquare = startSquare + data.cardinalOffset[directionIdx];
 
             // checks that king isn't moving off the board
-            if ( !(targetSquare < 0 || targetSquare > 63) ) {
+            if (!(targetSquare < 0 || targetSquare > 63)) {
                 int pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
                 // as long as square is not occupied by same color piece, it can move there
@@ -92,13 +105,14 @@ public class Move {
             }
         }
 
-        if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
+        if (possibleMoves.size() != 0)
+            moves.put(startSquare, possibleMoves);
     }
 
     // have to impliment au passant and simplify captures
-    public static void generatePawnMoves(int piece, int startSquare) {    
+    public static void generatePawnMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
-        
+
         // checks if pawns moves up or down the board
         int lateralDirection = (Piece.isColor(piece, Piece.White)) ? 0 : 1;
 
@@ -160,21 +174,22 @@ public class Move {
             }
         }
 
-        if (possibleMoves.size() != 0) moves.put(startSquare, possibleMoves);
+        if (possibleMoves.size() != 0)
+            moves.put(startSquare, possibleMoves);
     }
 
     public static boolean hasPawnMoved(int piece, int square) {
-        // (square / 8) ranges from 0 to 7 so adding one to go from 1 and 8 
+        // (square / 8) ranges from 0 to 7 so adding one to go from 1 and 8
         int rank = (square / 8) + 1;
 
-        if (Piece.isColor(piece, Piece.White) && rank == 2) {
+        if (Piece.isColor(piece, Piece.White) && rank == 7) {
             return false;
         }
 
-        if (Piece.isColor(piece, Piece.Black) && rank == 7) {
+        if (Piece.isColor(piece, Piece.Black) && rank == 2) {
             return false;
         }
-        
+
         return true;
     }
 }
