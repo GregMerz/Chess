@@ -6,7 +6,7 @@ public class Piece {
     public static final int Bishop = 4;
     public static final int Rook = 5;
     public static final int Queen = 6;
-    
+
     public static final int White = 0b01000;
     public static final int Black = 0b10000;
 
@@ -17,6 +17,10 @@ public class Piece {
         return piece & typeMask;
     }
 
+    public static int getColor(int piece) {
+        return piece & colorMask;
+    }
+
     public static boolean isColor(int piece, int color) {
         return (piece & colorMask) == color;
     }
@@ -25,7 +29,7 @@ public class Piece {
         return (piece & 0b100) != 0;
     }
 
-    //check later
+    // check later
     public static boolean sameColor(int piece1, int piece2) {
         return ((piece1 ^ piece2) & colorMask) == 0;
     }

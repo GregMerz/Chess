@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Screen {
@@ -10,6 +11,7 @@ public class Screen {
     int endY;
     int endX;
     int hoveredSquare = -1;
+    List<Integer> moveableMoves = new ArrayList<Integer>();
     public int[] tiles = new int[64];
 
     public Screen(int width, int height) {
@@ -67,17 +69,17 @@ public class Screen {
     }
 
     public void update() {
-        if (Mouse.getButton() == 1) {
-            int mousePosX = Mouse.getX();
-            int mousePosY = Mouse.getY();
+        int mousePosX = Mouse.getX();
+        int mousePosY = Mouse.getY();
 
-            if (mousePosX > startX && mousePosX < endX && mousePosY > startY && mousePosY < endY) {
-                int file = (mousePosX - startX) / 64;
-                int rank = (mousePosY - startY) / 64;
-                int pieceIndex = file + rank * 8;
+        if (mousePosX > startX && mousePosX < endX && mousePosY > startY && mousePosY < endY) {
+            int file = (mousePosX - startX) / 64;
+            int rank = (mousePosY - startY) / 64;
+            int pieceIndex = file + rank * 8;
+            int piece = BoardStatus.peek(file + rank * 8);
 
+            if (Mouse.getButton() == 1) {
                 if (hoveredSquare == -1) {
-                    int piece = BoardStatus.peek(file + rank * 8);
 
                     if (piece != 0 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
                         initTiles();
@@ -101,6 +103,22 @@ public class Screen {
                         BoardStatus.nextTurn();
                         hoveredSquare = -1;
                         initTiles();
+                    }
+                    /*
+                     * if (tiles[pieceIndex] == 0xFF0000) { initTiles(); hoveredSquare = -1; }
+                     */
+                }
+            }
+
+            else if (hoveredSquare == -1 && piece != 0 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
+                initTiles();
+                List<Integer> targetSquares = Move.moves.get(pieceIndex);
+
+                if (targetSquares != null && targetSquares.size() > 0) {
+                    tiles[pieceIndex] = 0x00FF00;
+
+                    for (int i = 0; i < targetSquares.size(); i++) {
+                        tiles[targetSquares.get(i)] = 0x808080;
                     }
                 }
             }

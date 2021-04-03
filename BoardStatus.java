@@ -6,15 +6,32 @@ public class BoardStatus {
     public static int fullMoveNumber;
 
     public static void nextTurn() {
-        if (colorTurn == Piece.Black) fullMoveNumber++;
+        if (colorTurn == Piece.Black)
+            fullMoveNumber++;
         // colorTurn xor colorMask changes the color
         colorTurn = colorTurn ^ Piece.colorMask;
     }
 
     public static void move(int startSquare, int targetSquare) {
+        enPassantSquare = -1;
+
         int piece = board[startSquare];
+        if (Piece.getType(piece) == Piece.Pawn && Math.abs(targetSquare - startSquare) == 16) {
+            setEnPassant(startSquare, Piece.getColor(piece));
+        }
+
         board[startSquare] = Piece.Empty;
         board[targetSquare] = piece;
+    }
+
+    static void setEnPassant(int startSquare, int color) {
+        if (color == Piece.White) {
+            enPassantSquare = startSquare - 8;
+        }
+
+        else {
+            enPassantSquare = startSquare + 8;
+        }
     }
 
     public static int peek(int square) {

@@ -65,9 +65,36 @@ public class Move {
 
     public static void generateKnightMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
+        int startingDirection;
+        int endingDirection;
+
+        int file = startSquare % 8;
+
+        switch (file) {
+        case 0:
+            startingDirection = 4;
+            endingDirection = 8;
+            break;
+        case 1:
+            startingDirection = 2;
+            endingDirection = 8;
+            break;
+        case 6:
+            startingDirection = 0;
+            endingDirection = 6;
+            break;
+        case 7:
+            startingDirection = 0;
+            endingDirection = 4;
+            break;
+        default:
+            startingDirection = 0;
+            endingDirection = 8;
+            break;
+        }
 
         // iterate through all possible knight moves
-        for (int moveIdx = 0; moveIdx < 8; moveIdx++) {
+        for (int moveIdx = startingDirection; moveIdx < endingDirection; moveIdx++) {
             int targetSquare = startSquare + data.knightMovement[moveIdx];
 
             // checks if targetSquare a number from 0-63
