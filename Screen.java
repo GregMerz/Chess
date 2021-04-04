@@ -110,16 +110,22 @@ public class Screen {
                 }
             }
 
-            else if (hoveredSquare == -1 && piece != 0 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
-                initTiles();
-                List<Integer> targetSquares = Move.moves.get(pieceIndex);
+            else if (hoveredSquare == -1 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
+                if (piece != 0) {
 
-                if (targetSquares != null && targetSquares.size() > 0) {
-                    tiles[pieceIndex] = 0x00FF00;
+                    initTiles();
+                    List<Integer> targetSquares = Move.moves.get(pieceIndex);
 
-                    for (int i = 0; i < targetSquares.size(); i++) {
-                        tiles[targetSquares.get(i)] = 0x808080;
+                    if (targetSquares != null && targetSquares.size() > 0) {
+                        tiles[pieceIndex] = 0x00FF00;
+
+                        for (int i = 0; i < targetSquares.size(); i++) {
+                            tiles[targetSquares.get(i)] = 0x808080;
+                        }
                     }
+                }
+                if (piece == 0) {
+                    initTiles();
                 }
             }
         }

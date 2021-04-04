@@ -6,8 +6,8 @@ public class Move {
     public static HashMap<Integer, List<Integer>> moves;
     public static PrecomputedData data = new PrecomputedData();
 
-    public static void loadMoves() {
-        moves = new HashMap<>();
+    public static HashMap<Integer, List<Integer>> loadMoves() {
+        HashMap<Integer, List<Integer>> moves = new HashMap<>();
 
         for (int square = 0; square < 64; square++) {
             int piece = BoardStatus.peek(square);
@@ -17,19 +17,25 @@ public class Move {
 
             if (piece == 0)
                 continue;
-            else if (Piece.isSlidingPiece(piece))
-                generateSlidingMoves(piece, square);
-            else if (pieceType == Piece.Pawn)
-                generatePawnMoves(piece, square);
-            else if (pieceType == Piece.Knight)
-                generateKnightMoves(piece, square);
-            else
-                generateKingMoves(piece, square);
+            else if (Piece.isSlidingPiece(piece)) {
+                List<Integer> targetSquares = generateSlidingMoves(piece, square);
+                moves.put(square, targetSquares);
+            } else if (pieceType == Piece.Pawn) {
+                List<Integer> targetSquares = generatePawnMoves(piece, square);
+                moves.put(square, targetSquares);
+            } else if (pieceType == Piece.Knight) {
+                List<Integer> targetSquares = generateKnightMoves(piece, square);
+                moves.put(square, targetSquares);
+            } else {
+                List<Integer> targetSquares = generateKingMoves(piece, square);
+                moves.put(square, targetSquares);
+            }
         }
 
+        return moves;
     }
 
-    public static void generateSlidingMoves(int piece, int startSquare) {
+    public static List<Integer> generateSlidingMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
 
         int pieceType = Piece.getType(piece);
@@ -59,11 +65,10 @@ public class Move {
             }
         }
 
-        if (possibleMoves.size() != 0)
-            moves.put(startSquare, possibleMoves);
+        return possibleMoves;
     }
 
-    public static void generateKnightMoves(int piece, int startSquare) {
+    public static List<Integer> generateKnightMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
         int startingDirection;
         int endingDirection;
@@ -109,12 +114,11 @@ public class Move {
             }
         }
 
-        if (possibleMoves.size() != 0)
-            moves.put(startSquare, possibleMoves);
+        return possibleMoves;
     }
 
     // ADD TO SEE IF KING WOULD BE PUT IN CHECK
-    public static void generateKingMoves(int piece, int startSquare) {
+    public static List<Integer> generateKingMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
 
         // iterate through all cardinal directions
@@ -132,12 +136,11 @@ public class Move {
             }
         }
 
-        if (possibleMoves.size() != 0)
-            moves.put(startSquare, possibleMoves);
+        return possibleMoves;
     }
 
     // have to impliment au passant and simplify captures
-    public static void generatePawnMoves(int piece, int startSquare) {
+    public static List<Integer> generatePawnMoves(int piece, int startSquare) {
         List<Integer> possibleMoves = new ArrayList<>();
 
         // checks if pawns moves up or down the board
@@ -159,50 +162,37 @@ public class Move {
             }
         }
 
-        // 4 6
-        if (lateralDirection == 0) {
-            if (startSquare % 8 != 0) {
-                targetSquare = startSquare + data.cardinalOffset[4];
-                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+        if (startSquare % 8 != 7) {
+            // data.cardinalOffset[2] is East
+            targetSquare = startSquare + data.cardinalOffset[lateralDirection] + data.cardinalOffset[2];
+            pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
-                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
-                    possibleMoves.add(targetSquare);
-                }
+            if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                possibleMoves.add(targetSquare);
             }
 
-            if (startSquare % 8 != 7) {
-                targetSquare = startSquare + data.cardinalOffset[6];
-                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
-
-                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
-                    possibleMoves.add(targetSquare);
-                }
+            // Check for en passant
+            if (targetSquare == BoardStatus.enPassantSquare) {
+                possibleMoves.add(targetSquare);
             }
         }
 
-        // 5, 7
-        if (lateralDirection == 1) {
-            if (startSquare % 8 != 7) {
-                targetSquare = startSquare + data.cardinalOffset[5];
-                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
+        if (startSquare % 8 != 0) {
+            // data.cardinalOffset[2] is East
+            targetSquare = startSquare + data.cardinalOffset[lateralDirection] + data.cardinalOffset[3];
+            pieceOnTargetSquare = BoardStatus.peek(targetSquare);
 
-                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
-                    possibleMoves.add(targetSquare);
-                }
+            if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
+                possibleMoves.add(targetSquare);
             }
 
-            if (startSquare % 8 != 0) {
-                targetSquare = startSquare + data.cardinalOffset[7];
-                pieceOnTargetSquare = BoardStatus.peek(targetSquare);
-
-                if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
-                    possibleMoves.add(targetSquare);
-                }
+            // Check for en passant
+            if (targetSquare == BoardStatus.enPassantSquare) {
+                possibleMoves.add(targetSquare);
             }
         }
 
-        if (possibleMoves.size() != 0)
-            moves.put(startSquare, possibleMoves);
+        return possibleMoves;
     }
 
     public static boolean hasPawnMoved(int piece, int square) {

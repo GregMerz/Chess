@@ -1,6 +1,3 @@
-import java.util.List;
-import java.util.Scanner;
-
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.image.BufferStrategy;
@@ -21,8 +18,6 @@ public class Chess extends Canvas implements Runnable {
 
     private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-
-    public static Scanner scan = new Scanner(System.in);
 
     public Chess() {
         Dimension size = new Dimension(width, height);
@@ -60,8 +55,9 @@ public class Chess extends Canvas implements Runnable {
     }
 
     public void update() {
-        Move.loadMoves();
+        Move.moves = Move.loadMoves();
         screen.update();
+        BoardStatus.setCheck();
     }
 
     public void render() {
@@ -146,6 +142,11 @@ public class Chess extends Canvas implements Runnable {
         Graphics g = bs.getDrawGraphics();
 
         g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+        g.setColor(Color.CYAN);
+
+        if (BoardStatus.inCheck == true) {
+            g.fillRect(0, 0, 64, 64);
+        }
 
         g.dispose();
         bs.show();
