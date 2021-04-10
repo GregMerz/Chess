@@ -3,6 +3,9 @@ import java.awt.Dimension;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -55,9 +58,7 @@ public class Chess extends Canvas implements Runnable {
     }
 
     public void update() {
-        Move.moves = Move.loadMoves();
         screen.update();
-        BoardStatus.setCheck();
     }
 
     public void render() {
@@ -142,11 +143,6 @@ public class Chess extends Canvas implements Runnable {
         Graphics g = bs.getDrawGraphics();
 
         g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-        g.setColor(Color.CYAN);
-
-        if (BoardStatus.inCheck == true) {
-            g.fillRect(0, 0, 64, 64);
-        }
 
         g.dispose();
         bs.show();
@@ -154,7 +150,7 @@ public class Chess extends Canvas implements Runnable {
 
     public static void main(String[] args) {
         FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        PrecomputedData.computeMoveData();
+        Move.moves = Move.loadMoves();
 
         Chess game = new Chess();
         game.frame.setResizable(false);

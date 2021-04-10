@@ -4,7 +4,11 @@ public class PrecomputedData {
 
     // SWW, NWW, SSW, NNW, SSE, NNE, SEE, NEE
     public int[] knightMovement = { -10, 6, -17, 15, -15, 17, -6, 10 };
-    public static int[][] numSquaresToEdge;
+    public static int[][] numSquaresToEdge = new int[64][8];
+
+    public PrecomputedData() {
+        computeMoveData();
+    }
 
     static void computeMoveData() {
         numSquaresToEdge = new int[64][8];

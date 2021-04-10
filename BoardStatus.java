@@ -7,7 +7,7 @@ public class BoardStatus {
     public static int enPassantSquare;
     public static int halfMoveClock;
     public static int fullMoveNumber;
-    public static boolean inCheck;
+    public static int inCheck = -1;
 
     public static void nextTurn() {
         if (colorTurn == Piece.Black)
@@ -17,6 +17,8 @@ public class BoardStatus {
     }
 
     public static void move(int startSquare, int targetSquare) {
+        inCheck = -1;
+
         if (targetSquare == enPassantSquare) {
             if (colorTurn == Piece.White) {
                 board[targetSquare + 8] = 0;
@@ -36,6 +38,9 @@ public class BoardStatus {
 
         board[startSquare] = Piece.Empty;
         board[targetSquare] = piece;
+
+        Move.loadMoves();
+        setCheck();
     }
 
     static void setEnPassant(int startSquare, int color) {
@@ -56,20 +61,17 @@ public class BoardStatus {
         board[square] = piece;
     }
 
-    public static boolean setCheck() {
-        colorTurn = colorTurn ^ Piece.colorMask;
-        HashMap<Integer, List<Integer>> moves = Move.loadMoves();
-        colorTurn = colorTurn ^ Piece.colorMask;
+    public static void setCheck() {
+        Move.moves.forEach((startSquare, targetSquares) -> {
+            int startPiece = board[startSquare];
 
-        moves.forEach((startSquare, targetSquares) -> {
-            for (int i = 0; i < targetSquares.size(); i++) {
-                int piece = BoardStatus.peek(targetSquares.get(i));
-                if (Piece.getType(piece) == Piece.King && !Piece.sameColor(piece, BoardStatus.colorTurn)) {
-                    inCheck = true;
+            for (int targetSquare : targetSquares) {
+                int targetPiece = board[targetSquare];
+                if (Piece.getType(targetPiece) == Piece.King && !Piece.sameColor(startPiece, targetPiece)) {
+                    inCheck = targetSquare;
+                    break;
                 }
             }
         });
-
-        return false;
     }
 }

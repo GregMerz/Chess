@@ -134,5 +134,9 @@ public class Screen {
             initTiles();
             hoveredSquare = -1;
         }
+
+        if (BoardStatus.inCheck != -1) {
+            tiles[BoardStatus.inCheck] = 0x0000FF;
+        }
     }
 }
