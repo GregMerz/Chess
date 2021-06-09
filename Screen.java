@@ -99,7 +99,7 @@ public class Screen {
 
                 else {
                     if (tiles[pieceIndex] == 0x808080) {
-                        BoardStatus.move(hoveredSquare, pieceIndex);
+                        BoardStatus.move(hoveredSquare, pieceIndex, BoardStatus.board);
                         BoardStatus.nextTurn();
                         hoveredSquare = -1;
                         initTiles();

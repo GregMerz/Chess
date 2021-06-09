@@ -147,7 +147,7 @@ public class Chess extends Canvas implements Runnable {
 
     public static void main(String[] args) {
         FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Move.moves = Move.loadMoves(Move.moves);
+        Move.moves = Move.loadMoves(Move.moves, BoardStatus.board);
 
         Chess game = new Chess();
         game.frame.setResizable(false);

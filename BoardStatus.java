@@ -19,16 +19,14 @@ public class BoardStatus {
         colorTurn = colorTurn ^ Piece.colorMask;
     }
 
-    public static void move(int startSquare, int targetSquare) {
+    public static void move(int startSquare, int targetSquare, int[] board) {
         inCheck = -1;
 
         // Deals with removing the en passant'd piece
         if (targetSquare == enPassantSquare) {
             if (colorTurn == Piece.White) {
                 board[targetSquare + 8] = 0;
-            }
-
-            else {
+            } else {
                 board[targetSquare - 8] = 0;
             }
         }
@@ -42,23 +40,24 @@ public class BoardStatus {
             setEnPassant(startSquare, Piece.getColor(piece));
         }
 
+        // If pawn is moving to last rank, make a queen
+        int rank = 8 - (targetSquare / 8);
+        if (Piece.getType(piece) == Piece.Pawn && (rank == 1 || rank == 8)) {
+            piece = colorTurn + Piece.Queen;
+        }
+
         // Moves the piece to the target square
         board[startSquare] = Piece.Empty;
         board[targetSquare] = piece;
 
         // Generates all the moves for both colored pieces
-        Move.moves = Move.loadMoves(Move.moves);
-
-        // If any of the pieces result in check, validateMoves() gets rid of all the
-        // moves
-        // that would keep you in check
-        if (setCheck()) {
-            Move.validateMoves();
-        }
+        Move.moves = Move.loadMoves(Move.moves, board);
+        Move.validateMoves();
+        setCheck();
 
         // If in checkmate, end the game
-        if (inCheck != -1 && isCheckMate()) {
-
+        if (Move.moves.size() == 1) {
+            System.out.println("Checkmate");
         }
     }
 
@@ -94,13 +93,5 @@ public class BoardStatus {
         });
 
         return (inCheck == -1) ? false : true;
-    }
-
-    public static boolean isCheckMate() {
-        if (Move.moves.size() == 0) {
-            return true;
-        }
-
-        return false;
     }
 }
