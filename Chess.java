@@ -3,9 +3,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -150,7 +147,7 @@ public class Chess extends Canvas implements Runnable {
 
     public static void main(String[] args) {
         FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Move.moves = Move.loadMoves();
+        Move.moves = Move.loadMoves(Move.moves);
 
         Chess game = new Chess();
         game.frame.setResizable(false);

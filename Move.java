@@ -4,12 +4,10 @@ import java.util.List;
 
 public class Move {
     public static HashMap<Integer, List<Integer>> moves;
-    public static HashMap<Integer, List<Integer>> dependencies;
     public static PrecomputedData data = new PrecomputedData();
 
-    public static HashMap<Integer, List<Integer>> loadMoves() {
+    public static HashMap<Integer, List<Integer>> loadMoves(HashMap<Integer, List<Integer>> moves) {
         moves = new HashMap<Integer, List<Integer>>();
-        dependencies = new HashMap<>();
 
         for (int square = 0; square < 64; square++) {
             int piece = BoardStatus.peek(square);
@@ -21,55 +19,27 @@ public class Move {
             if (Piece.isSlidingPiece(piece)) {
                 List<Integer> targetSquares = generateSlidingMoves(piece, square);
                 moves.put(square, targetSquares);
-                for (int targetSquare : targetSquares) {
-                    if (dependencies.containsKey(targetSquare)) {
-                        dependencies.get(targetSquare).add(square);
-                    } else {
-                        List<Integer> pieceIndexes = new ArrayList<>();
-                        pieceIndexes.add(square);
-                        dependencies.put(targetSquare, pieceIndexes);
-                    }
-                }
             } else if (pieceType == Piece.Pawn) {
                 List<Integer> targetSquares = generatePawnMoves(piece, square);
                 moves.put(square, targetSquares);
-                for (int targetSquare : targetSquares) {
-                    if (dependencies.containsKey(targetSquare)) {
-                        dependencies.get(targetSquare).add(square);
-                    } else {
-                        List<Integer> pieceIndexes = new ArrayList<>();
-                        pieceIndexes.add(square);
-                        dependencies.put(targetSquare, pieceIndexes);
-                    }
-                }
             } else if (pieceType == Piece.Knight) {
                 List<Integer> targetSquares = generateKnightMoves(piece, square);
                 moves.put(square, targetSquares);
-                for (int targetSquare : targetSquares) {
-                    if (dependencies.containsKey(targetSquare)) {
-                        dependencies.get(targetSquare).add(square);
-                    } else {
-                        List<Integer> pieceIndexes = new ArrayList<>();
-                        pieceIndexes.add(square);
-                        dependencies.put(targetSquare, pieceIndexes);
-                    }
-                }
             } else {
                 List<Integer> targetSquares = generateKingMoves(piece, square);
                 moves.put(square, targetSquares);
-                for (int targetSquare : targetSquares) {
-                    if (dependencies.containsKey(targetSquare)) {
-                        dependencies.get(targetSquare).add(square);
-                    } else {
-                        List<Integer> pieceIndexes = new ArrayList<>();
-                        pieceIndexes.add(square);
-                        dependencies.put(targetSquare, pieceIndexes);
-                    }
-                }
             }
         }
 
         return moves;
+    }
+
+    public static void validateMoves() {
+        int[] board = new int[64];
+        for (int i = 0; i < 64; i++) {
+            board[i] = BoardStatus.board[i];
+        }
+
     }
 
     public static List<Integer> generateSlidingMoves(int piece, int startSquare) {

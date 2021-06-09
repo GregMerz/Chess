@@ -11,6 +11,7 @@ public class SpriteSheet {
     public int[] pixels;
 
     public static SpriteSheet chessPieces = new SpriteSheet("ChessPieces.png", 384, 128);
+    public static SpriteSheet newChessPieces = new SpriteSheet("newchesspieces.png", 384, 768);
 
     public SpriteSheet(String path, int width, int height) {
         this.path = path;
