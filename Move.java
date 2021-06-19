@@ -1,16 +1,21 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class Move {
     public static HashMap<Integer, List<Integer>> moves;
+    public static HashSet<Integer> whiteCoveredMoves;
+    public static HashSet<Integer> blackCoveredMoves;
     public static PrecomputedData data = new PrecomputedData();
     public static boolean inCheck = false;
 
     public static HashMap<Integer, List<Integer>> loadMoves(HashMap<Integer, List<Integer>> moves, int[] board) {
         moves = new HashMap<Integer, List<Integer>>();
+        whiteCoveredMoves = new HashSet<Integer>();
+        blackCoveredMoves = new HashSet<Integer>();
 
         for (int square = 0; square < 64; square++) {
             int piece = board[square];
@@ -34,8 +39,9 @@ public class Move {
                 if (targetSquares.size() != 0) {
                     moves.put(square, targetSquares);
                 }
-            } else {
+            } else if (pieceType == Piece.King) {
                 List<Integer> targetSquares = generateKingMoves(piece, square, board);
+                targetSquares.addAll(generateCastlingMoves(piece, square, board));
                 if (targetSquares.size() != 0) {
                     moves.put(square, targetSquares);
                 }
@@ -43,6 +49,43 @@ public class Move {
         }
 
         return moves;
+    }
+
+    public static List<Integer> generateCastlingMoves(int piece, int square, int[] board) {
+        List<Integer> possibleMoves = new ArrayList<>();
+
+        if (BoardStatus.colorTurn == Piece.White) {
+            if (!BoardStatus.whiteKingMoved) {
+                if (!BoardStatus.leftWhiteRookMoved) {
+                    if (board[1] == 0 && board[2] == 0 && board[3] == 0) {
+                        possibleMoves.add(2);
+                    }
+                }
+                if (!BoardStatus.rightWhiteRookMoved) {
+                    if (board[5] == 0 && board[6] == 0) {
+                        possibleMoves.add(6);
+                    }
+                }
+            }
+
+        } else {
+            if (!BoardStatus.blackKingMoved) {
+                if (!BoardStatus.leftBlackRookMoved) {
+
+                    if (board[57] == 0 && board[58] == 0 && board[59] == 0) {
+                        possibleMoves.add(58);
+                    }
+                }
+                if (!BoardStatus.rightBlackRookMoved) {
+
+                    if (board[61] == 0 && board[62] == 0) {
+                        possibleMoves.add(62);
+                    }
+                }
+            }
+        }
+
+        return possibleMoves;
     }
 
     public static void validateMoves() {
@@ -152,6 +195,13 @@ public class Move {
                 int targetSquare = startSquare + data.cardinalOffset[directionIdx] * n;
                 int pieceOnTargetSquare = board[targetSquare];
 
+                if (pieceOnTargetSquare == Piece.Empty) {
+                    if (Piece.getColor(piece) == Piece.White) {
+                        whiteCoveredMoves.add(targetSquare);
+                    } else {
+                        blackCoveredMoves.add(targetSquare);
+                    }
+                }
                 // if piece on target square is same color, then you can't move to that square
                 if (Piece.sameColor(piece, pieceOnTargetSquare))
                     break;
@@ -211,6 +261,11 @@ public class Move {
                     continue;
 
                 possibleMoves.add(targetSquare);
+                if (Piece.getColor(piece) == Piece.White) {
+                    whiteCoveredMoves.add(targetSquare);
+                } else {
+                    blackCoveredMoves.add(targetSquare);
+                }
             }
         }
 
@@ -232,6 +287,11 @@ public class Move {
                 // as long as square is not occupied by same color piece, it can move there
                 if (!Piece.sameColor(piece, pieceOnTargetSquare)) {
                     possibleMoves.add(targetSquare);
+                    if (Piece.getColor(piece) == Piece.White) {
+                        whiteCoveredMoves.add(targetSquare);
+                    } else {
+                        blackCoveredMoves.add(targetSquare);
+                    }
                 }
             }
         }
@@ -270,6 +330,12 @@ public class Move {
             targetSquare = startSquare + data.cardinalOffset[lateralDirection] + data.cardinalOffset[2];
             pieceOnTargetSquare = board[targetSquare];
 
+            if (Piece.getColor(piece) == Piece.White) {
+                whiteCoveredMoves.add(targetSquare);
+            } else {
+                blackCoveredMoves.add(targetSquare);
+            }
+
             if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
                 possibleMoves.add(targetSquare);
             }
@@ -284,6 +350,12 @@ public class Move {
             // data.cardinalOffset[2] is East
             targetSquare = startSquare + data.cardinalOffset[lateralDirection] + data.cardinalOffset[3];
             pieceOnTargetSquare = board[targetSquare];
+
+            if (Piece.getColor(piece) == Piece.White) {
+                whiteCoveredMoves.add(targetSquare);
+            } else {
+                blackCoveredMoves.add(targetSquare);
+            }
 
             if (pieceOnTargetSquare != 0 && !Piece.sameColor(piece, pieceOnTargetSquare)) {
                 possibleMoves.add(targetSquare);

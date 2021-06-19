@@ -98,7 +98,7 @@ public class Screen {
                 }
 
                 else {
-                    if (tiles[pieceIndex] == 0x808080) {
+                    if (Move.moves.get(hoveredSquare).contains(pieceIndex)) {
                         BoardStatus.move(hoveredSquare, pieceIndex, BoardStatus.board);
                         BoardStatus.nextTurn();
                         hoveredSquare = -1;
@@ -137,6 +137,21 @@ public class Screen {
 
         if (BoardStatus.inCheck != -1) {
             tiles[BoardStatus.inCheck] = 0x0000FF;
+        }
+
+        for (int i = 0; i < 64; i++) {
+            // if (Move.whiteCoveredMoves.contains(i)) {
+
+            // if (Move.blackCoveredMoves.contains(i)) {
+            // tiles[i] = 0x800000;
+            // } else {
+            // tiles[i] = 0x800080;
+            // }
+            // }
+
+            // else if (Move.blackCoveredMoves.contains(i)) {
+            // tiles[i] = 0xffc0cb;
+            // }
         }
     }
 }
