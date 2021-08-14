@@ -68,70 +68,7 @@ public class Chess extends Canvas implements Runnable {
 
         screen.renderBackground();
         screen.renderTiles();
-
-        for (int y = 0; y < 8; y++) {
-            for (int x = 0; x < 8; x++) {
-                int piece = BoardStatus.peek(x + y * 8);
-
-                if (piece == 0) {
-                    continue;
-                }
-
-                // Pawns
-                if (Piece.getType(piece) == Piece.Pawn) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whitePawn.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackPawn.pixels);
-                    }
-                }
-
-                // Rook
-                if (Piece.getType(piece) == Piece.Rook) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whiteRook.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackRook.pixels);
-                    }
-                }
-
-                // Knight
-                if (Piece.getType(piece) == Piece.Knight) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whiteKnight.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackKnight.pixels);
-                    }
-                }
-
-                // Bishop
-                if (Piece.getType(piece) == Piece.Bishop) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whiteBishop.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackBishop.pixels);
-                    }
-                }
-
-                // Queen
-                if (Piece.getType(piece) == Piece.Queen) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whiteQueen.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackQueen.pixels);
-                    }
-                }
-
-                // King
-                if (Piece.getType(piece) == Piece.King) {
-                    if (Piece.isColor(piece, Piece.White)) {
-                        screen.renderPieces(x, y, Sprite.whiteKing.pixels);
-                    } else {
-                        screen.renderPieces(x, y, Sprite.blackKing.pixels);
-                    }
-                }
-            }
-        }
+        screen.renderAllPieces();
 
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = screen.pixels[i];
@@ -147,7 +84,7 @@ public class Chess extends Canvas implements Runnable {
 
     public static void main(String[] args) {
         FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Move.moves = Move.loadMoves(Move.moves, BoardStatus.board);
+        Move.loadMoves(BoardStatus.board);
 
         Chess game = new Chess();
         game.frame.setResizable(false);

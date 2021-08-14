@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class BoardStatus {
     public static int[] board = new int[64];
     public static int colorTurn;
@@ -5,6 +8,11 @@ public class BoardStatus {
     public static int halfMoveClock;
     public static int fullMoveNumber;
     public static int inCheck = -1;
+
+    public static int whiteKingSquare = 60;
+    public static int blackKingSquare = 4;
+
+    public static List<Integer> changedBoardSquares;
 
     // Variables for castling
     public static boolean leftWhiteRookMoved = false;
@@ -17,6 +25,8 @@ public class BoardStatus {
     public static boolean checkmate = false;
 
     public static void move(int startSquare, int targetSquare, int[] board) {
+        changedBoardSquares = new ArrayList<>();
+
         int piece = board[startSquare];
         int rank = 8 - (targetSquare / 8);
         int file = (targetSquare % 8) + 1;
@@ -40,49 +50,52 @@ public class BoardStatus {
         }
 
         // Moves the piece to the target square
-        board[startSquare] = Piece.Empty;
-        board[targetSquare] = piece;
+        changeBoard(startSquare, Piece.Empty);
+        changeBoard(targetSquare, piece);
 
         // Moves rook if castling
         moveRookForCastling(piece, startSquare, targetSquare);
 
         // Generates all the moves for both colored pieces
-        Move.moves = Move.loadMoves(Move.moves, board);
-        Move.validateMoves();
+        Move.updateMoves(changedBoardSquares, board);
+        // Move.validateMoves();
         setCheck();
 
-        // If in checkmate, end the game
-        if (Move.moves.size() == 1) {
-            System.out.println("Checkmate");
-        }
+        // // If in checkmate, end the game
+        // if (Move.moves.size() == 1) {
+        // System.out.println("Checkmate");
+        // }
+
+        nextTurn();
     }
 
     public static void moveRookForCastling(int piece, int startSquare, int targetSquare) {
         if (piece == Piece.King + Piece.White) {
             if (startSquare - targetSquare == 2) {
                 int castlingRook = board[56];
-                board[startSquare - 1] = castlingRook;
-                board[56] = Piece.Empty;
+
+                changeBoard(startSquare - 1, castlingRook);
+                changeBoard(56, Piece.Empty);
             }
 
             if (startSquare - targetSquare == -2) {
                 int castlingRook = board[63];
-                board[startSquare + 1] = castlingRook;
-                board[63] = Piece.Empty;
+                changeBoard(startSquare + 1, castlingRook);
+                changeBoard(63, Piece.Empty);
             }
         }
 
         else if (piece == Piece.King + Piece.Black) {
             if (startSquare - targetSquare == 2) {
                 int castlingRook = board[0];
-                board[startSquare - 1] = castlingRook;
-                board[0] = Piece.Empty;
+                changeBoard(startSquare - 1, castlingRook);
+                changeBoard(0, Piece.Empty);
             }
 
             if (startSquare - targetSquare == -2) {
                 int castlingRook = board[7];
-                board[startSquare + 1] = castlingRook;
-                board[7] = Piece.Empty;
+                changeBoard(startSquare + 1, castlingRook);
+                changeBoard(7, Piece.Empty);
             }
         }
     }
@@ -131,9 +144,9 @@ public class BoardStatus {
     public static void removeEnPassantPiece(int targetSquare) {
         if (targetSquare == enPassantSquare) {
             if (colorTurn == Piece.White) {
-                board[targetSquare + 8] = 0;
+                changeBoard(targetSquare + 8, 0);
             } else {
-                board[targetSquare - 8] = 0;
+                changeBoard(targetSquare - 8, 0);
             }
         }
 
@@ -173,5 +186,18 @@ public class BoardStatus {
         });
 
         return (inCheck == -1) ? false : true;
+    }
+
+    public static void changeBoard(int square, int piece) {
+        board[square] = piece;
+        changedBoardSquares.add(square);
+
+        if (piece == Piece.King + Piece.White) {
+            whiteKingSquare = square;
+        }
+
+        if (piece == Piece.King + Piece.Black) {
+            blackKingSquare = square;
+        }
     }
 }
