@@ -39,6 +39,28 @@ public class FenUtility {
 
         BoardStatus.colorTurn = (fenParts[1].equals("w")) ? Piece.White : Piece.Black;
 
+        String canCastle = fenParts[2];
+        if (canCastle.equals("-")) {
+        } else {
+            for (char letter : canCastle.toCharArray()) {
+                switch (letter) {
+                    case 'K':
+
+                        break;
+                    case 'Q':
+
+                        break;
+                    case 'k':
+
+                        break;
+                    case 'q':
+
+                        break;
+                }
+
+            }
+        }
+
         String square = fenParts[3];
         if (square.equals("-")) {
             BoardStatus.enPassantSquare = -1;

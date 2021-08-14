@@ -55,6 +55,8 @@ public class BoardStatus {
         if (Move.moves.size() == 1) {
             System.out.println("Checkmate");
         }
+
+        nextTurn();
     }
 
     public static void moveRookForCastling(int piece, int startSquare, int targetSquare) {
