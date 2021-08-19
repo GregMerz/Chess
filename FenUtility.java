@@ -3,7 +3,7 @@ import java.util.HashMap;
 public class FenUtility {
     public static HashMap<Character, Integer> pieceTypeFromSymbol = new HashMap<>();
 
-    public static void chessSetup(String fen) {
+    public static void chessSetup(String fen, BoardStatus bs) {
         pieceTypeFromSymbol.put('p', Piece.Pawn);
         pieceTypeFromSymbol.put('n', Piece.Knight);
         pieceTypeFromSymbol.put('b', Piece.Bishop);
@@ -32,12 +32,16 @@ public class FenUtility {
             else {
                 int pieceColor = (Character.isUpperCase(symbol)) ? Piece.White : Piece.Black;
                 int pieceType = pieceTypeFromSymbol.get(Character.toLowerCase(symbol));
-                BoardStatus.setBoard(file + rank * 8, pieceColor | pieceType);
+                bs.setBoard(file + rank * 8, pieceColor | pieceType);
                 file++;
             }
         }
 
-        BoardStatus.colorTurn = (fenParts[1].equals("w")) ? Piece.White : Piece.Black;
+        if (fenParts[1].equals("w")) {
+            bs.setColorTurn(Piece.White);
+        } else {
+            bs.setColorTurn(Piece.Black);
+        }
 
         String canCastle = fenParts[2];
         if (canCastle.equals("-")) {
@@ -63,15 +67,15 @@ public class FenUtility {
 
         String square = fenParts[3];
         if (square.equals("-")) {
-            BoardStatus.enPassantSquare = -1;
+            bs.setEnPassantSquare(-1);
         } else {
             char squareFile = square.charAt(0);
             int squareRank = square.charAt(1);
             int squareIdx = (squareFile - 'A') + ((squareRank - 1) * 8);
-            BoardStatus.enPassantSquare = squareIdx;
+            bs.setEnPassantSquare(squareIdx);
         }
 
-        BoardStatus.halfMoveClock = Character.getNumericValue(fenParts[4].charAt(0));
-        BoardStatus.fullMoveNumber = Character.getNumericValue(fenParts[5].charAt(0));
+        bs.setHalfMoveClock(Character.getNumericValue(fenParts[4].charAt(0)));
+        bs.setFullMoveNumber(Character.getNumericValue(fenParts[5].charAt(0)));
     }
 }

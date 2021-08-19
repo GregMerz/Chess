@@ -51,10 +51,10 @@ public class Screen {
         }
     }
 
-    public void renderAllPieces() {
+    public void renderAllPieces(BoardStatus bs) {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 8; x++) {
-                int piece = BoardStatus.peek(x + y * 8);
+                int piece = bs.getBoard(x + y * 8);
 
                 if (piece == 0) {
                     continue;
@@ -134,7 +134,7 @@ public class Screen {
         }
     }
 
-    public void update() {
+    public void update(BoardStatus bs) {
         int mousePosX = Mouse.getX();
         int mousePosY = Mouse.getY();
 
@@ -143,7 +143,7 @@ public class Screen {
             int file = (mousePosX - startX) / 64;
             int rank = (mousePosY - startY) / 64;
             int pieceIndex = file + rank * 8;
-            int piece = BoardStatus.peek(file + rank * 8);
+            int piece = bs.getBoard(file + rank * 8);
 
             // Checks if you left-click your mouse
             if (Mouse.getButton() == 1) {
@@ -151,10 +151,10 @@ public class Screen {
                 if (selectedSquare == -1) {
 
                     // Checks if you are clicking a piece for your color
-                    if (piece != 0 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
+                    if (piece != 0 && Piece.sameColor(piece, bs.getColorTurn())) {
                         initTiles();
 
-                        List<Integer> targetSquares = Move.moves.get(pieceIndex);
+                        List<Integer> targetSquares = bs.getMoves().get(pieceIndex);
 
                         // Checks that the piece you clicked on has valid moves
                         if (targetSquares != null && targetSquares.size() > 0) {
@@ -172,19 +172,19 @@ public class Screen {
 
                 else {
                     // Checks if you can move your selected piece to where you left-clicked
-                    if (Move.moves.get(selectedSquare).contains(pieceIndex)) {
-                        BoardStatus.move(selectedSquare, pieceIndex, BoardStatus.board);
+                    if (bs.getMoves().get(selectedSquare).contains(pieceIndex)) {
+                        bs.move(selectedSquare, pieceIndex);
                         selectedSquare = -1;
                         initTiles();
                     }
                 }
             }
 
-            else if (selectedSquare == -1 && Piece.sameColor(piece, BoardStatus.colorTurn)) {
+            else if (selectedSquare == -1 && Piece.sameColor(piece, bs.getColorTurn())) {
                 if (piece != 0) {
 
                     initTiles();
-                    List<Integer> targetSquares = Move.moves.get(pieceIndex);
+                    List<Integer> targetSquares = bs.getMoves().get(pieceIndex);
 
                     if (targetSquares != null && targetSquares.size() > 0) {
                         tiles[pieceIndex] = 0x00FF00;
@@ -207,8 +207,8 @@ public class Screen {
         }
 
         // Makes the king's tile blue if you are in check
-        if (BoardStatus.inCheck != -1) {
-            tiles[BoardStatus.inCheck] = 0x0000FF;
+        if (bs.getInCheck() != -1) {
+            tiles[bs.getInCheck()] = 0x0000FF;
         }
     }
 }

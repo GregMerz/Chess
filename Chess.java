@@ -16,6 +16,9 @@ public class Chess extends Canvas implements Runnable {
     private Screen screen;
     private boolean isRunning = false;
 
+    private BoardStatus bs;
+    private Mouse mouse;
+
     private BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
@@ -26,7 +29,11 @@ public class Chess extends Canvas implements Runnable {
         screen = new Screen(width, height);
         frame = new JFrame();
 
-        Mouse mouse = new Mouse();
+        bs = new BoardStatus();
+        FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", bs);
+        Move.loadMoves(bs);
+
+        mouse = new Mouse();
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
     }
@@ -55,7 +62,7 @@ public class Chess extends Canvas implements Runnable {
     }
 
     public void update() {
-        screen.update();
+        screen.update(bs);
     }
 
     public void render() {
@@ -68,7 +75,7 @@ public class Chess extends Canvas implements Runnable {
 
         screen.renderBackground();
         screen.renderTiles();
-        screen.renderAllPieces();
+        screen.renderAllPieces(this.bs);
 
         for (int i = 0; i < pixels.length; i++) {
             pixels[i] = screen.pixels[i];
@@ -83,9 +90,6 @@ public class Chess extends Canvas implements Runnable {
     }
 
     public static void main(String[] args) {
-        FenUtility.chessSetup("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-        Move.moves = Move.loadMoves(Move.moves, BoardStatus.board);
-
         Chess game = new Chess();
         game.frame.setResizable(false);
         game.frame.setTitle("Chess Game");
