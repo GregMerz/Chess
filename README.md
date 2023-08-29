@@ -18,4 +18,4 @@ Lastly, click any of the possible moves to finish your turn.  Next is black's tu
 
 ## Goals
 
-Currently, I want to implement machine learning to create a computer AI by using neural networks.  The next thing I want to do is enable remote play. 
+Currently, I want to implement machine learning to create an AI by using neural networks.  The next thing I want to do is enable remote play. 
